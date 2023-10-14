@@ -4,12 +4,9 @@ let activeEffect: ReactiveEffect | undefined;
 class ReactiveEffect<T = any> {
   constructor(public fn: () => T) {
   }
-
   run() {
-    activeEffect = this;
     return this.fn();
   }
-
 }
 
 function ref<T>(value: T) {
@@ -45,17 +42,15 @@ function triggerEffects(dep: Dep) {
   }
 }
 
+function myWatchEffect(fn:()=>any):void {
+    const effect = new ReactiveEffect(fn)
+    activeEffect = effect;
+    effect.run()
+    activeEffect = undefined;
+}
+
 const msg = ref<string>("hello!")
 
-const showMsg:ReactiveEffect = new ReactiveEffect(()=>console.log("I am tracking ",msg.value))
+myWatchEffect(()=>console.log("I am tracking ",msg.value))
 
 msg.value = "changed!"
-
-
-export interface ComputedRef<T = any> extends WritableComputedRef<T> {
-    readonly value: T
-  }
-  
-  export interface WritableComputedRef<T> extends Ref<T> {
-    readonly effect: ReactiveEffect<T>
-  }
