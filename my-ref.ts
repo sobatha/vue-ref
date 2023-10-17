@@ -5,6 +5,7 @@ class ReactiveEffect<T = any> {
   constructor(public fn: () => T) {
   }
   run() {
+    activeEffect = this;
     return this.fn();
   }
 }
@@ -44,7 +45,6 @@ function triggerEffects(dep: Dep) {
 
 function myWatchEffect(fn:()=>any):void {
     const effect = new ReactiveEffect(fn)
-    activeEffect = effect;
     effect.run()
     activeEffect = undefined;
 }
