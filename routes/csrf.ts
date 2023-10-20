@@ -8,7 +8,7 @@ csrf.use(
     session({
         secret: "session",
         resave: false,
-        saveUnintialized:true,
+        saveUninitialized:true,
         cookie: {
             httpOnly: true,
             secure: false,
@@ -29,7 +29,7 @@ csrf.post("/login" , (req, res)=>{
         res.send('login fail')
         return
     }
-    sessionData =req.session
-    sessionData.usename = username
+    sessionData = req.session
+    sessionData.username = username
     res.redirect("/csrf_test.html")
 })

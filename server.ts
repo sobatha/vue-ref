@@ -1,6 +1,6 @@
 import express from 'express'
-import {router} from './routes/api'
-import {csrf} from './routes/csrf'
+import {router} from './routes/api.js'
+import {csrf} from './routes/csrf.js'
 
 const app: express.Express = express();
 const port: number = 3000;
