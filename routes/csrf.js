@@ -1,11 +1,12 @@
 import express from 'express';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import crypto from 'crypto'
 export const csrf = express.Router();
 csrf.use(session({
     secret: "session",
     resave: false,
-    saveUnintialized: true,
+    saveUninitialized: true,
     cookie: {
         httpOnly: true,
         secure: false,
@@ -22,7 +23,25 @@ csrf.post("/login", (req, res) => {
         res.send('login fail');
         return;
     }
+
     sessionData = req.session;
-    sessionData.usename = username;
+    sessionData.username = username;
+
+    const token = crypto.randomUUID();
+    res.cookie("csrf_token", token, {secure: true})
     res.redirect("/csrf_test.html");
+});
+csrf.post("/remit", (req, res) => {
+    if (!req.session.username || req.session.username !== sessionData.username) {
+        res.status(403);
+        res.send('loginしていません');
+        return;
+    }
+    if (req.cookies["csrf_token"] !== req.body["csrf_token"]) {
+        res.status(400)
+        res.send("不正")
+        return;
+    }
+    const { to, amount } = req.body;
+    res.send(`${to}に${amount}円送金しました`);
 });

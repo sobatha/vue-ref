@@ -20,7 +20,7 @@ csrf.use(
 csrf.use(express.urlencoded({extended: true}))
 csrf.use(cookieParser())
 
-let sessionData = {}
+let sessionData:any = {}
 
 csrf.post("/login" , (req, res)=>{
     const { username, password} = req.body
@@ -32,4 +32,14 @@ csrf.post("/login" , (req, res)=>{
     sessionData = req.session
     sessionData.username = username
     res.redirect("/csrf_test.html")
+})
+
+csrf.post("/remit" , (req, res)=>{
+    if (!req.session.username || req.session.username !== sessionData.username) {
+        res.status(403)
+        res.send('loginしていません')
+        return
+    }
+    const {to, amount} = req.body
+    res.send(`${to}に${amount}円送金しました`)
 })
